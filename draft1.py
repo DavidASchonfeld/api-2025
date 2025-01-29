@@ -8,14 +8,8 @@ import requests
 import pprint
 from enum import Enum
 
-
-# from xml.etree import ElementTree
-# from defusedxml.ElementTree
-# from defusedxml.ElementTree import parse
-# from defusedxml.ElementTree import iterparse
-# Python safeguard library for parsing XML
 from lxml import etree
-import lxml
+import json
 
 # ITIS stands for "Integrated Taxonomic Information System"
 
@@ -51,13 +45,14 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
         print("response.content:")
         print(str(response.content))
         if (responseContentFormat == xmlOrJson.XML):
-            
+
             root : etree._Element = etree.XML(response.content, etree.XMLParser())
             print(type(root))
             print(etree.tostring(root))
         elif (responseContentFormat == xmlOrJson.JSON):
             print("TODO: JSON stuff")
-            pass
+            jsonObject : dict = json.loads(response.content)
+            print(jsonObject)
 
 
 
@@ -67,4 +62,4 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
 
 # "http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatchPaged?srchKey=dolphin&pageSize=2&pageNum=1&ascend=false"
 testRequest_request : str = "searchForAnyMatchPaged?srchKey=dolphin&pageSize=2&pageNum=1&ascend=false"
-sendRequest_toITIS(testRequest_request, xmlOrJson.XML)
+sendRequest_toITIS(testRequest_request, xmlOrJson.JSON)
