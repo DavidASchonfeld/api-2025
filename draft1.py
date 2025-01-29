@@ -65,37 +65,6 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
         # return response._content
     
 
-
 # "http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatchPaged?srchKey=dolphin&pageSize=2&pageNum=1&ascend=false"
 testRequest_request : str = "searchForAnyMatchPaged?srchKey=dolphin&pageSize=2&pageNum=1&ascend=false"
 sendRequest_toITIS(testRequest_request, xmlOrJson.XML)
-
-
-# print("urlToSend: "+urlToSend)
-# responseOne_original_json : requests.Response = requests.get(urlToSend)
-
-# For getting all results, too long for defusedxml to process
-# "http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?srchKey=dolphin
-
-# For getting 1 page of results
-# http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatchPaged?srchKey=Zy&pageSize=100&pageNum=1&ascend=false
-
-
-# responseOne_original_json_content : bytes = responseOne_original_json.content
-# print(responseOne_original_json.status_code)
-# print(responseOne_original_json_content)
-# print('------------------')
-
-# root = etree.fromstring()
-# responseOne_parsed = ElementTree.parse(responseOne_original.content)
-# events = ElementTree.iterparse(responseOne_contents)
-# for event, elem in events:
-#     pass
-#     print('i')
-
-
-# TODO:
-# Process XML
-# Process JSON
-
-# pprint.pprint(responseOne_parsed)
