@@ -40,38 +40,34 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         print("response.status_code: "+str(response.status_code))
+        raise requests.exceptions.HTTPError("Response Status Code: "+str(response.status_code))
     except Exception as error:
         pass
 
-    print("response.content:")
-    print(str(response.content))
-    print("---------")
     responseContent_dict : dict
     if (responseContentFormat == xmlOrJson.XML):
 
         root : etree._Element = etree.XML(response.content, etree.XMLParser())
-        print(type(root))
-        print(etree.tostring(root))
-        print("---")
+        # print(etree.tostring(root))
 
         responseContent_dict : dict = xmltodict.parse(response.content)
     elif (responseContentFormat == xmlOrJson.JSON):
         responseContent_dict : dict = json.loads(response.content)
-    print("-------------")
 
     return responseContent_dict
+
+
+
+###### Test ######
 
 # "http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatchPaged?srchKey=dolphin&pageSize=2&pageNum=1&ascend=false"
 testRequest_request : str = "searchForAnyMatchPaged?srchKey=dolphin&pageSize=2&pageNum=1&ascend=false"
 dataReceived_request1_json : dict = sendRequest_toITIS(testRequest_request, xmlOrJson.JSON)
 dataReceived_request1_xml : dict = sendRequest_toITIS(testRequest_request, xmlOrJson.XML)
+
 if (dataReceived_request1_json == dataReceived_request1_xml):
     print("Results from JSON and XML are the same")
     # They are the same!
-
 else:
     print("Results from JSON and XML are the same")
-print("------dataReceived--JSON---")
-print(dataReceived_request1_json)
-print("------dataReceived--XML----")
-print(dataReceived_request1_xml)
+##################
