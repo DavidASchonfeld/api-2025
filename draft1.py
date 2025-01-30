@@ -10,6 +10,7 @@ from enum import Enum
 
 from lxml import etree
 import json
+import xmltodict
 
 # ITIS stands for "Integrated Taxonomic Information System"
 
@@ -44,17 +45,22 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
         #TODO: Finish this method
         print("response.content:")
         print(str(response.content))
+        print("---------")
         if (responseContentFormat == xmlOrJson.XML):
 
             root : etree._Element = etree.XML(response.content, etree.XMLParser())
             print(type(root))
             print(etree.tostring(root))
+
+            testDict : dict = xmltodict.parse(response.content)
+            print(testDict)
         elif (responseContentFormat == xmlOrJson.JSON):
             print("TODO: JSON stuff")
             jsonObject : dict = json.loads(response.content)
             print(jsonObject)
 
-
+    else:
+        raise NotImplementedError("Code that responds to Response Codes that are <400 and NOT 200 are not implemented yet.")
 
 
         # return response._content
