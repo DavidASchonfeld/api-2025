@@ -56,7 +56,6 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
 
         responseContent_dict : dict = xmltodict.parse(response.content)
     elif (responseContentFormat == xmlOrJson.JSON):
-        print("TODO: JSON stuff")
         responseContent_dict : dict = json.loads(response.content)
     print("-------------")
 
@@ -68,6 +67,8 @@ dataReceived_request1_json : dict = sendRequest_toITIS(testRequest_request, xmlO
 dataReceived_request1_xml : dict = sendRequest_toITIS(testRequest_request, xmlOrJson.XML)
 if (dataReceived_request1_json == dataReceived_request1_xml):
     print("Results from JSON and XML are the same")
+    # They are the same!
+
 else:
     print("Results from JSON and XML are the same")
 print("------dataReceived--JSON---")
