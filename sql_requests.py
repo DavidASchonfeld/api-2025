@@ -9,3 +9,5 @@ engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
 with engine.connect() as connection:
     result = connection.execute(text("Select 'Hello World'"))
     print(result.all())
+
+# Test: Not implemented yet.
