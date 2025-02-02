@@ -10,4 +10,12 @@ with engine.connect() as connection:
     result = connection.execute(text("Select 'Hello World'"))
     print(result.all())
 
-# Test: Not implemented yet.
+    connection.execute(text("CREATE TABLE test_one (x int, y int)"))
+    connection.execute( \
+        text("INSERT INTO test_one (x, y) VALUES (:x, :y)"),
+             [{"x": 1, "y": 1}, {"x" : 2, "y" : 2}]
+    )
+    connection.commit()
+
+
+
