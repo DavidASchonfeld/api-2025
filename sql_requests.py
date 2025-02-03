@@ -1,6 +1,7 @@
 import sqlalchemy
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine.cursor import CursorResult
+from sqlalchemy.engine import Result
 
 print(str(sqlalchemy.__version__))
 
@@ -45,11 +46,12 @@ with engine.connect() as connection:
     from sqlalchemy.orm import Session
     stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
     with Session(engine) as session:
-        result2 = session.execute(stmt, {"y": 6})
+        result2 : Result = session.execute(stmt, {"y": 6})
         for row in result2:
             print(f"x: {row.x} y {row.y}")
+        print(type(result2))
 
-        result2 = session.execute(
+        result2 : Result = session.execute(
             text("UPDATE test_one SET y = :y WHERE x = :x"),
             [{"x":9, "y":11}, {"x":13, "y":15}] 
         )
