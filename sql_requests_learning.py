@@ -3,6 +3,9 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.engine import Result
 
+# NOTE: Most of this file right now, is just going through the SQL Alchemy since I am way more familar with pyodbc
+# https://docs.sqlalchemy.org/en/20/tutorial/engine.html)
+
 print(str(sqlalchemy.__version__))
 
 
@@ -47,6 +50,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import MetaData
 from sqlalchemy import Table, Column, Integer, String
 from sqlalchemy import ForeignKey
+from sqlalchemy.orm import DeclarativeBase
 
 stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
 with Session(engine) as session:
@@ -80,6 +84,36 @@ with Session(engine) as session:
         Column("email_address", String, nullable=False)
     )
     metadata_obj.create_all(engine)  # Emit the create table statements to the database
+
+
+
+
+from typing import List
+from typing import Optional
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+class Base(DeclarativeBase):
+    pass
+print(Base.metadata)
+print(Base.registry)
+
+
+class User(Base):
+    __tablename__ = "user_account"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(30))
+    fullname: Mapped[Optional[str]]
+
+    addresses: Mapped[List["Address"]] : RelationshipDeclared = relationship(back_populates="user")
+    #TODO: Add type-hinting here
+
+    def __repr(self) -> str:
+        return f"User(id={self.id!r}, name={self.name!r}), fullname={self.fullname!r})"
+
+class Address(Base):
+    __tablename__ = "address"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
 
         
 
