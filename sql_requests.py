@@ -39,3 +39,4 @@ with engine.connect() as connection:
         text("INSERT INTO test_one (x, y) VALUES (:x, :y)"),
         [{"x": 11, "y": 12}, {"x":13, "y": 14}]
     )
+    connection.commit()
