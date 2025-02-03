@@ -42,19 +42,45 @@ with engine.connect() as connection:
     )
     connection.commit()
 
-    #### ORM-Specific
-    from sqlalchemy.orm import Session
-    stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
-    with Session(engine) as session:
-        result2 : Result = session.execute(stmt, {"y": 6})
-        for row in result2:
-            print(f"x: {row.x} y {row.y}")
-        print(type(result2))
+#### ORM-Specific
+from sqlalchemy.orm import Session
+from sqlalchemy import MetaData
+from sqlalchemy import Table, Column, Integer, String
+from sqlalchemy import ForeignKey
 
-        result2 : Result = session.execute(
-            text("UPDATE test_one SET y = :y WHERE x = :x"),
-            [{"x":9, "y":11}, {"x":13, "y":15}] 
-        )
-        session.commit()
+stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
+with Session(engine) as session:
+    result2 : Result = session.execute(stmt, {"y": 6})
+    for row in result2:
+        print(f"x: {row.x} y {row.y}")
+    print(type(result2))
 
-    ####
+    result2 : Result = session.execute(
+        text("UPDATE test_one SET y = :y WHERE x = :x"),
+        [{"x":9, "y":11}, {"x":13, "y":15}] 
+    )
+    session.commit()
+
+    metadata_obj : MetaData = MetaData()
+    user_table : Table = Table(
+        "user_account",
+        metadata_obj,
+        Column("id", Integer, primary_key=True),
+        Column("name", String(30)),
+        Column("fullname", String),
+    )
+    print(str(user_table.c))
+    print(str(user_table.primary_key))
+
+    address_table : Table = Table(
+        "address",
+        metadata_obj,
+        Column("id", Integer, primary_key=True),
+        Column("user_id", ForeignKey("user_account.id"), nullable=False),
+        Column("email_address", String, nullable=False)
+    )
+    metadata_obj.create_all(engine)  # Emit the create table statements to the database
+
+        
+
+####
