@@ -40,3 +40,19 @@ with engine.connect() as connection:
         [{"x": 11, "y": 12}, {"x":13, "y": 14}]
     )
     connection.commit()
+
+    #### ORM-Specific
+    from sqlalchemy.orm import Session
+    stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
+    with Session(engine) as session:
+        result2 = session.execute(stmt, {"y": 6})
+        for row in result2:
+            print(f"x: {row.x} y {row.y}")
+
+        result2 = session.execute(
+            text("UPDATE test_one SET y = :y WHERE x = :x"),
+            [{"x":9, "y":11}, {"x":13, "y":15}] 
+        )
+        session.commit()
+
+    ####
