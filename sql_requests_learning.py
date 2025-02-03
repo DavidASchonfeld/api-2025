@@ -3,8 +3,9 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.engine import Result
 
-# NOTE: Most of this file right now, is just going through the SQL Alchemy since I am way more familar with pyodbc
-# https://docs.sqlalchemy.org/en/20/tutorial/engine.html)
+
+# NOTE: I am used to working with pyodbc, and since it would be great for me to be more familar with SQLAlchemy,
+# this document is about me getting familiar with SQLAlchemy. I am going through SQLAlchemy's official tutorial: https://docs.sqlalchemy.org/en/20/tutorial/engine.html
 
 print(str(sqlalchemy.__version__))
 
