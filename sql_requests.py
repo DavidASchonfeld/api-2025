@@ -1,5 +1,7 @@
 import sqlalchemy
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine.cursor import CursorResult
+
 print(str(sqlalchemy.__version__))
 
 
@@ -14,15 +16,26 @@ with engine.connect() as connection:
     print(result.all())
 
     connection.execute(text("CREATE TABLE test_one (x int, y int)"))
-    connection.execute( \
+    connection.execute(
         text("INSERT INTO test_one (x, y) VALUES (:x, :y)"),
              [{"x": 1, "y": 1}, {"x" : 2, "y" : 2}]
     )
     connection.commit()
 
-    result = connection.execute(text("SELECT x, y FROM test_one"))
+    result : CursorResult = connection.execute(
+        text("SELECT x, y FROM test_one")
+    )
     for eachRow in result:
         print(f"x: {eachRow.x} y: {eachRow.y}")
 
+    result : CursorResult = connection.execute(
+        text("SELECT x, y FROM test_one WHERE y < :y"),
+        {"y" : 2}
+    )
+    for eachRow in result:
+        print(f"x: {eachRow.x} y: {eachRow.y}")
 
-
+    connection.execute(
+        text("INSERT INTO test_one (x, y) VALUES (:x, :y)"),
+        [{"x": 11, "y": 12}, {"x":13, "y": 14}]
+    )
