@@ -141,3 +141,27 @@ print(some_Table)
 
 
 ####
+## INSERT
+from sqlalchemy import insert
+stmt_insert : sqlalchemy.Insert = insert(user_table).values(name="John", fullname="John Doe")
+print(stmt_insert)
+stmt_insert_compiled = stmt_insert.compile()
+print(stmt_insert_compiled)
+print(stmt_insert_compiled.params)
+
+with engine.connect() as conn:
+    result : CursorResult = conn.execute(stmt_insert)
+    conn.commit()
+    print(result.inserted_primary_key)
+
+print(insert(user_table))
+print(insert(user_table).values().compile(engine))
+print(insert(Address_OrmMappedClass).returning(Address_OrmMappedClass.id, Address_OrmMappedClass.email_address))
+
+from sqlalchemy import select
+select_stmt : sqlalchemy.Select = select(user_table.c.id, user_table.c.name+"gmail.com")
+print(select_stmt)
+insert_stmt : sqlalchemy.Insert = insert(Address_OrmMappedClass).from_select(
+    ["user_id", "email_address"], select_stmt
+)
+print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))
