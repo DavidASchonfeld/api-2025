@@ -52,6 +52,8 @@ from sqlalchemy import Table, Column, Integer, String
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase
 
+####### Creating Tables
+
 stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
 with Session(engine) as session:
     result2 : Result = session.execute(stmt, {"y": 6})
@@ -67,7 +69,7 @@ with Session(engine) as session:
 
     metadata_obj : MetaData = MetaData()
     user_table : Table = Table(
-        "user_account",
+        "user_account_basicMap",
         metadata_obj,
         Column("id", Integer, primary_key=True),
         Column("name", String(30)),
@@ -77,10 +79,10 @@ with Session(engine) as session:
     print(str(user_table.primary_key))
 
     address_table : Table = Table(
-        "address",
+        "address_basicMap",
         metadata_obj,
         Column("id", Integer, primary_key=True),
-        Column("user_id", ForeignKey("user_account.id"), nullable=False),
+        Column("user_id", ForeignKey("user_account_basicMap.id"), nullable=False),
         Column("email_address", String, nullable=False)
     )
     metadata_obj.create_all(engine)  # Emit the create table statements to the database
@@ -92,29 +94,49 @@ from typing import List
 from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+# https://docs.sqlalchemy.org/en/20/tutorial/metadata.html 
+# For Type-Hinting, not necessary
+from sqlalchemy.orm import MappedColumn
+
 class Base(DeclarativeBase):
     pass
 print(Base.metadata)
 print(Base.registry)
 
 
-class User(Base):
-    __tablename__ = "user_account"
+## ORM-Mapped Classes
+class User_OrmMappedClass(Base):
+    __tablename__ = "user_account_orm_table"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(30))
     fullname: Mapped[Optional[str]]
 
-    addresses: Mapped[List["Address"]] : RelationshipDeclared = relationship(back_populates="user")
-    #TODO: Add type-hinting here
+    addresses: Mapped[List["Address_OrmMappedClass"]] = relationship(back_populates="User_OrmMappedClass")
 
-    def __repr(self) -> str:
-        return f"User(id={self.id!r}, name={self.name!r}), fullname={self.fullname!r})"
+    def __repr__(self) -> str:
+        return f"User_OrmMappedClass(id={self.id!r}, name={self.name!r}), fullname={self.fullname!r})"
 
-class Address(Base):
-    __tablename__ = "address"
+class Address_OrmMappedClass(Base):
+    __tablename__ = "address_orm_table"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    email_address: Mapped[str]
+    user_id : MappedColumn[int] = mapped_column(ForeignKey("user_account_orm_table.id"))
 
+    user : Mapped[User_OrmMappedClass] = relationship(back_populates="addresses")
+
+    def __repr__(self) -> str:
+        return f"Address_OrmMappedClass(id={self.id!r}, email_address={self.email_address!r})"
         
+    ### The __init__() method is automatically generated if we don't type it here explicitly
+
+# # Emit the CREATE_TABLE statements to the database
+Base.metadata.create_all(engine)
+
+######## Reflecting Tables aka Reading Tables and Pulling them into Python classes
+some_Table : Table = Table("user_account_orm_table", metadata_obj, autoload_with=engine)
+print(some_Table)
+
+
 
 ####
