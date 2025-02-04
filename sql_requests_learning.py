@@ -69,17 +69,17 @@ with Session(engine) as session:
     session.commit()
 
     metadata_obj : MetaData = MetaData()
-    user_table : Table = Table(
+    user_table_basicMapped : Table = Table(
         "user_account_basicMap",
         metadata_obj,
         Column("id", Integer, primary_key=True),
         Column("name", String(30)),
         Column("fullname", String),
     )
-    print(str(user_table.c))
-    print(str(user_table.primary_key))
+    print(str(user_table_basicMapped.c))
+    print(str(user_table_basicMapped.primary_key))
 
-    address_table : Table = Table(
+    address_table_basicMapped : Table = Table(
         "address_basicMap",
         metadata_obj,
         Column("id", Integer, primary_key=True),
@@ -143,7 +143,7 @@ print(some_Table)
 ####
 ## INSERT
 from sqlalchemy import insert
-stmt_insert : sqlalchemy.Insert = insert(user_table).values(name="John", fullname="John Doe")
+stmt_insert : sqlalchemy.Insert = insert(user_table_basicMapped).values(name="John", fullname="John Doe")
 print(stmt_insert)
 stmt_insert_compiled = stmt_insert.compile()
 print(stmt_insert_compiled)
@@ -154,23 +154,84 @@ with engine.connect() as conn:
     conn.commit()
     print(result.inserted_primary_key)
 
-print(insert(user_table))
-print(insert(user_table).values().compile(engine))
+print(insert(user_table_basicMapped))
+print(insert(user_table_basicMapped).values().compile(engine))
 print(insert(Address_OrmMappedClass).returning(Address_OrmMappedClass.id, Address_OrmMappedClass.email_address))
 
 from sqlalchemy import select
-select_stmt : sqlalchemy.Select = select(user_table.c.id, user_table.c.name+"@gmail.com")
+select_stmt : sqlalchemy.Select = select(user_table_basicMapped.c.id, user_table_basicMapped.c.name+"@gmail.com")
 print(select_stmt)
 insert_stmt : sqlalchemy.Insert = insert(Address_OrmMappedClass).from_select(
     ["user_id", "email_address"], select_stmt
 )
-print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))
+print(insert_stmt.returning(address_table_basicMapped.c.id, address_table_basicMapped.c.email_address))
 
 with engine.connect() as conn:
     for row in conn.execute(select_stmt):
         print(row)
 
-select_stmt : sqlalchemy.Select = select(user_table).where(User_OrmMappedClass.fullname == "johndoe")
+select_stmt : sqlalchemy.Select = select(user_table_basicMapped).where(User_OrmMappedClass.fullname == "John Doe").where(User_OrmMappedClass.name == "John")
 with Session(engine) as session:
     for row in session.execute(select_stmt):
         print(row)
+
+    select_stmt : sqlalchemy.Select = select(user_table_basicMapped.c.name, address_table_basicMapped.c.email_address).join_from(
+        user_table_basicMapped, address_table_basicMapped
+    )
+    for row in session.execute(select_stmt):
+        print(row)
+    select_stmt : sqlalchemy.Select = select(user_table_basicMapped.c.name, address_table_basicMapped.c.email_address).join(address_table_basicMapped)
+    print(select_stmt)
+
+from sqlalchemy import func
+print(select(func.count("*")).select_from(user_table_basicMapped))
+
+print(
+    select(address_table_basicMapped.c.email_address)
+    .select_from(user_table_basicMapped)
+    .join(address_table_basicMapped, user_table_basicMapped.c.id == address_table_basicMapped.c.id)
+)
+
+print(
+    select(user_table_basicMapped).join(address_table_basicMapped, isouter=True)  # LEFT JOIN aka LEFT OUTER JOIN
+)
+print(
+    select(user_table_basicMapped).join(address_table_basicMapped, full=True)  # FULL JOIN aka FULL OUTER JOIN
+) 
+
+print(
+    select(user_table_basicMapped).order_by(user_table_basicMapped.c.fullname.desc())  # ORDER BY user_account.name DESC
+)
+
+with engine.connect() as connection:
+    result : CursorResult = connection.execute(
+        select(user_table_basicMapped.c.name, func.count(address_table_basicMapped.c.id).label("count"))
+        .join(address_table_basicMapped)
+        .group_by(user_table_basicMapped.c.name)
+        .having(func.count(address_table_basicMapped.c.id) > 1)
+    )
+# The statement above makes the statement below:
+# BEGIN (implicit)
+# SELECT user_account.name, count(address.id) AS count
+# FROM user_account JOIN address ON user_account.id = address.user_id GROUP BY user_account.name
+# HAVING count(address.id) > ?
+# [...] (1,)
+
+from sqlalchemy import desc
+
+stmt : sqlalchemy.Select = (
+    select(address_table_basicMapped.c.user_id, func.count(address_table_basicMapped.c.id).label("num_addresses"))
+    .group_by("user_id")
+    .order_by("user_id", desc("num_addresses"))
+)
+print(stmt)
+
+# Aliases
+# Core:
+aliasForUser_basicMapped = user_table_basicMapped
+# ORM:
+from sqlalchemy.orm import aliased
+aliasForUser = aliased(User_OrmMappedClass)
+
+
+
