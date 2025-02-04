@@ -55,9 +55,9 @@ from sqlalchemy.orm import DeclarativeBase
 
 ####### Creating Tables
 
-stmt : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
+stmt_addVar : sqlalchemy.TextClause = text("SELECT x, y FROM test_one WHERE y > :y ORDER BY x, y")
 with Session(engine) as session:
-    result2 : Result = session.execute(stmt, {"y": 6})
+    result2 : Result = session.execute(stmt_addVar, {"y": 6})
     for row in result2:
         print(f"x: {row.x} y {row.y}")
     print(type(result2))
@@ -231,7 +231,38 @@ print(stmt)
 aliasForUser_basicMapped = user_table_basicMapped
 # ORM:
 from sqlalchemy.orm import aliased
-aliasForUser = aliased(User_OrmMappedClass)
+aliasForUser = aliased(user_table_basicMapped)
 
+# By adding a subquery() at the end of a statement object, you can use it as a subquery
 
+subqueryOne : sqlalchemy.Subquery = (
+    select(func.count(address_table_basicMapped.c.id).label("count"), address_table_basicMapped.c.user_id)
+    .group_by(address_table_basicMapped.c.user_id)
+    .subquery()
+)
+print(select(subqueryOne.c.user_id, subqueryOne.c.count))
 
+stmt_joinSubQWithPlain : sqlalchemy.Select = select(user_table_basicMapped.c.name, user_table_basicMapped.c.fullname, subqueryOne.c.count).join_from(
+    user_table_basicMapped, subqueryOne
+)
+print(stmt_joinSubQWithPlain)
+
+# CTEs (Common Table Expressions)
+# Create them just like subqueries (but with .cte())
+
+stmt_cteDeclaration : sqlalchemy.cte = (
+    select(func.count(address_table_basicMapped.c.id).label("count"), address_table_basicMapped.c.user_id)
+    .group_by(address_table_basicMapped.c.user_id)
+    .cte()
+)
+print(stmt_cteDeclaration)
+
+# Scalar Subqueries
+# use .scalar_subquery()
+
+stmt_scalarSubquery : sqlalchemy.ScalarSelect = (
+    select(func.count(address_table_basicMapped.c.id))
+    .where(user_table_basicMapped.c.id == address_table_basicMapped.c.user_id)
+    .scalar_subquery()
+)
+print(stmt_scalarSubquery)
