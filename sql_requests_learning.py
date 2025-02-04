@@ -159,9 +159,18 @@ print(insert(user_table).values().compile(engine))
 print(insert(Address_OrmMappedClass).returning(Address_OrmMappedClass.id, Address_OrmMappedClass.email_address))
 
 from sqlalchemy import select
-select_stmt : sqlalchemy.Select = select(user_table.c.id, user_table.c.name+"gmail.com")
+select_stmt : sqlalchemy.Select = select(user_table.c.id, user_table.c.name+"@gmail.com")
 print(select_stmt)
 insert_stmt : sqlalchemy.Insert = insert(Address_OrmMappedClass).from_select(
     ["user_id", "email_address"], select_stmt
 )
 print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))
+
+with engine.connect() as conn:
+    for row in conn.execute(select_stmt):
+        print(row)
+
+select_stmt : sqlalchemy.Select = select(user_table).where(User_OrmMappedClass.fullname == "johndoe")
+with Session(engine) as session:
+    for row in session.execute(select_stmt):
+        print(row)
