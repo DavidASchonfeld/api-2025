@@ -266,3 +266,7 @@ stmt_scalarSubquery : sqlalchemy.ScalarSelect = (
     .scalar_subquery()
 )
 print(stmt_scalarSubquery)
+
+# UNION
+
+# TODO
