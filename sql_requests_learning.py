@@ -268,5 +268,9 @@ stmt_scalarSubquery : sqlalchemy.ScalarSelect = (
 print(stmt_scalarSubquery)
 
 # UNION
+from sqlalchemy import union_all
+stmt_select_one : sqlalchemy.Select = select(user_table_basicMapped).where(user_table_basicMapped.c.name == "John")
+stmt_select_two : sqlalchemy.Select = select(user_table_basicMapped).where(user_table_basicMapped.c.name == "Bob")
+u = union_all(stmt_select_one, stmt_select_two)
 
 # TODO
