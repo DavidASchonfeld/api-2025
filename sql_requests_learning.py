@@ -333,6 +333,7 @@ session_section_ormInsert.add(jim_doe)
 session.new
 # To manually push changes, use flush
 session.flush()
+# (Usually, we use session's autoflush, which will be explained later)
 
 # Current point: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html
 
