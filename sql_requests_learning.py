@@ -271,6 +271,38 @@ print(stmt_scalarSubquery)
 from sqlalchemy import union_all
 stmt_select_one : sqlalchemy.Select = select(user_table_basicMapped).where(user_table_basicMapped.c.name == "John")
 stmt_select_two : sqlalchemy.Select = select(user_table_basicMapped).where(user_table_basicMapped.c.name == "Bob")
-u = union_all(stmt_select_one, stmt_select_two)
+u : sqlalchemy.CompoundSelect = union_all(stmt_select_one, stmt_select_two)
+print(u)
+u_subquery = u.subquery()
+print(u_subquery)
 
-# TODO
+# EXISTS
+# only for scalar
+stmt_scalar_exists : sqlalchemy.Exists = (
+    select(func.count(address_table_basicMapped.c.id))
+    .where(user_table_basicMapped.c.name == "John")
+    .group_by(address_table_basicMapped.c.user_id)
+    .having(func.count(address_table_basicMapped.c.id) > 1)
+).exists()
+print(stmt_scalar_exists)
+
+## UPDATE
+from sqlalchemy import update
+stmt_update_basic : sqlalchemy.Update = (
+    update(user_table_basicMapped)
+    .where(user_table_basicMapped.c.name == "John")
+    .values(fullname="John Doe")
+)
+stmt_update_something : sqlalchemy.Update = (
+    update(user_table_basicMapped)
+    .values(fullname="Username: "+user_table_basicMapped.c.name)
+)
+print(stmt_update_something)
+
+## DELETE
+from sqlalchemy import delete
+stmt_delete_basic : sqlalchemy.Delete = (
+    delete(user_table_basicMapped).where(user_table_basicMapped.c.name == "John")
+)
+
+
