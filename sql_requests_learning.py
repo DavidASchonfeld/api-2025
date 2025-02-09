@@ -305,4 +305,35 @@ stmt_delete_basic : sqlalchemy.Delete = (
     delete(user_table_basicMapped).where(user_table_basicMapped.c.name == "John")
 )
 
+## Returning within UPDATE and delete
+stmt_update_returning = (
+    update(user_table_basicMapped)
+    .where(user_table_basicMapped.c.name == "John")
+    .values(fullname="John Doe")
+    .returning(user_table_basicMapped.c.id, user_table_basicMapped.c.fullname)
+)
+stmt_delete_returning = (
+    delete(user_table_basicMapped)
+    .where(user_table_basicMapped.c.name == "John")
+    .returning(user_table_basicMapped.c.id, user_table_basicMapped.c.fullname)
+)
+
+
+## ORM INSERT
+
+# two below objects are "transient" (not associated with a database, a session that can create INSERT statements etc.)
+jane_doe = User_OrmMappedClass(name="Jane", fullname="Jane Doe")
+jim_doe = User_OrmMappedClass(name="Jim", fullname="Jim Doe")
+
+session_section_ormInsert : Session = Session(engine)
+session_section_ormInsert.add(jane_doe)
+session_section_ormInsert.add(jim_doe)
+
+# To see pending objects in the session
+session.new
+# To manually push changes, use flush
+session.flush()
+
+# Current point: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html
+
 
