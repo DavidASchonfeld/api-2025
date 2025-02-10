@@ -343,8 +343,6 @@ print(session_partOfTutorial_ormInsert.new)
 session_partOfTutorial_ormInsert.flush()
 # # (Usually, we use session's autoflush, which will be explained later)
 
-# # # Current point: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html
-
 session_partOfTutorial_ormInsert.commit()
 
 # # "a flush occurs automatically before we emit any SELECT, using a behavior known as autoflush" (https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html)
@@ -391,3 +389,13 @@ result_didWeDeleteJim : Union[None, sqlalchemy.Row] = session.execute(
 print(type(result_didWeDeleteJim))
 print(result_didWeDeleteJim)
 print(jim in session)
+
+## To rollback
+session.rollback()
+
+
+
+
+session.close() # If we aren't using "session" in a "with" statement, we shouild close the session
+
+# Current Point: https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html
