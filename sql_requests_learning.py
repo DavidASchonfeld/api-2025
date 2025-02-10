@@ -328,34 +328,66 @@ stmt_delete_returning = (
 
 # ## ORM INSERT
 
-print("--SDFGSFGSDFGFSD--")
-#-----------------
-# Base.registry.configure()
-#-----------------
-
 # two below objects are "transient" (not associated with a database, a session that can create INSERT statements etc.)
 # testAddress = Address_OrmMappedClass()
 jane_doe = User_OrmMappedClass(name="Jane", fullname="Jane Doe")
 jim_doe = User_OrmMappedClass(name="Jim", fullname="Jim Doe")
 
-session_section_ormInsert : Session = Session(engine)
-session_section_ormInsert.add(jane_doe)
-session_section_ormInsert.add(jim_doe)
+session_partOfTutorial_ormInsert : Session = Session(engine)
+session_partOfTutorial_ormInsert.add(jane_doe)
+session_partOfTutorial_ormInsert.add(jim_doe)
 
 # To see pending objects in the session
-print(session.new)
+print(session_partOfTutorial_ormInsert.new)
 # To manually push changes, use flush
-session.flush()
+session_partOfTutorial_ormInsert.flush()
 # # (Usually, we use session's autoflush, which will be explained later)
 
 # # # Current point: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html
 
-session.commit()
+session_partOfTutorial_ormInsert.commit()
 
 # # "a flush occurs automatically before we emit any SELECT, using a behavior known as autoflush" (https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html)
 
-blandMan_fullname = session.execute(
+# Gets "Jane Doe" and "Jim Doe" that I just added to the table
+results : Result = session_partOfTutorial_ormInsert.execute(select(User_OrmMappedClass))
+print("--SDFGSFGSDFGFSD--")
+for eachResult in results:
+    print(eachResult)
+
+# Using a different session also shows the same results
+results : Result = session.execute(select(User_OrmMappedClass))
+for eachResult in results:
+    print(eachResult)
+
+# Get just the fullname, using a scalar result
+blandPerson_fullname = session.execute(
     select(User_OrmMappedClass.fullname).where(User_OrmMappedClass.id == 1)
 ).scalar_one()
-print(blandMan_fullname)
+print(blandPerson_fullname)
 
+# Get a person object by id
+jim = session.get(User_OrmMappedClass, 2)
+print(type(jim))
+print(jim)
+
+# Get a person object by name or fullname?
+jim = session.execute(
+    select(User_OrmMappedClass)
+    .filter_by(name="Jim")
+).scalar_one()
+print(jim)
+
+# Deleting
+session.delete(jim)
+## Note: Autoflush, including Deletion, does not occur until the next executed statement
+# Let's trigger it by using a select statement to look for Jim.
+
+from typing import Union
+result_didWeDeleteJim : Union[None, sqlalchemy.Row] = session.execute(
+    select(User_OrmMappedClass)
+    .where(User_OrmMappedClass.name == "Jim")
+).first()
+print(type(result_didWeDeleteJim))
+print(result_didWeDeleteJim)
+print(jim in session)
