@@ -112,7 +112,9 @@ class User_OrmMappedClass(Base):
     name: Mapped[str] = mapped_column(String(30))
     fullname: Mapped[Optional[str]]
 
-    addresses: Mapped[List["Address_OrmMappedClass"]] = relationship(back_populates="User_OrmMappedClass")
+    # addresses: Mapped[List["Address_OrmMappedClass"]] = relationship(back_populates="User_OrmMappedClass")
+    addresses_fieldInUserClass: Mapped[List["Address_OrmMappedClass"]] = relationship("Address_OrmMappedClass", back_populates="user_fieldInAddressClass")
+
 
     def __repr__(self) -> str:
         return f"User_OrmMappedClass(id={self.id!r}, name={self.name!r}), fullname={self.fullname!r})"
@@ -124,12 +126,17 @@ class Address_OrmMappedClass(Base):
     email_address: Mapped[str]
     user_id : MappedColumn[int] = mapped_column(ForeignKey("user_account_orm_table.id"))
 
-    user : Mapped[User_OrmMappedClass] = relationship(back_populates="addresses")
+    # user : Mapped[User_OrmMappedClass] = relationship(back_populates="addresses")
+    user_fieldInAddressClass : Mapped[User_OrmMappedClass] = relationship("User_OrmMappedClass", back_populates="addresses_fieldInUserClass")
 
     def __repr__(self) -> str:
         return f"Address_OrmMappedClass(id={self.id!r}, email_address={self.email_address!r})"
         
     ### The __init__() method is automatically generated if we don't type it here explicitly
+
+######## Testing - Not in the Tutorial
+Base.registry.configure()
+########
 
 # # Emit the CREATE_TABLE statements to the database
 Base.metadata.create_all(engine)
@@ -319,9 +326,15 @@ stmt_delete_returning = (
 )
 
 
-## ORM INSERT
+# ## ORM INSERT
+
+print("--SDFGSFGSDFGFSD--")
+#-----------------
+# Base.registry.configure()
+#-----------------
 
 # two below objects are "transient" (not associated with a database, a session that can create INSERT statements etc.)
+# testAddress = Address_OrmMappedClass()
 jane_doe = User_OrmMappedClass(name="Jane", fullname="Jane Doe")
 jim_doe = User_OrmMappedClass(name="Jim", fullname="Jim Doe")
 
@@ -330,11 +343,19 @@ session_section_ormInsert.add(jane_doe)
 session_section_ormInsert.add(jim_doe)
 
 # To see pending objects in the session
-session.new
+print(session.new)
 # To manually push changes, use flush
 session.flush()
-# (Usually, we use session's autoflush, which will be explained later)
+# # (Usually, we use session's autoflush, which will be explained later)
 
-# Current point: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html
+# # # Current point: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html
 
+session.commit()
+
+# # "a flush occurs automatically before we emit any SELECT, using a behavior known as autoflush" (https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html)
+
+blandMan_fullname = session.execute(
+    select(User_OrmMappedClass.fullname).where(User_OrmMappedClass.id == 1)
+).scalar_one()
+print(blandMan_fullname)
 
