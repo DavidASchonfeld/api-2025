@@ -396,6 +396,6 @@ session.rollback()
 
 
 
-session.close() # If we aren't using "session" in a "with" statement, we shouild close the session
+session.close() # If we aren't using "session" in a "with" statement, we should close the session
 
 # Current Point: https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html
