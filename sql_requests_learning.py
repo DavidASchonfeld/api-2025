@@ -398,4 +398,47 @@ session.rollback()
 
 session.close() # If we aren't using "session" in a "with" statement, we should close the session
 
-# Current Point: https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html
+
+# Creating new object
+user_joe : User_OrmMappedClass = User_OrmMappedClass(name="Joe", fullname="Joe Doe")
+print(user_joe.addresses_fieldInUserClass)
+address_joe_email1 : Address_OrmMappedClass = Address_OrmMappedClass(email_address="joeDoe_email1@Doe.doe")
+address_joe_email2 : Address_OrmMappedClass =  Address_OrmMappedClass(email_address="joeDoe_email2@Doe.doe")
+user_joe.addresses_fieldInUserClass.append(address_joe_email1)
+user_joe.addresses_fieldInUserClass.append(address_joe_email2)
+
+print(user_joe)
+
+## Add new object to the session
+session.add(user_joe)
+# This adds the user, and also adds the addresses that I had added to the user to
+
+session.commit()
+
+
+# Loader Strategies
+# -- Note: Used when the programmer sees that there are many redundant SELECT statements created by the SQLAlchemy code.
+# -- a type of parameters to specify generating different SELECT statements.
+
+# To implement, either implement in the SELECT statement
+
+# for user_obj in session.execute(
+#     select(User).options(selectinload(User.addresses))
+# )
+
+# or in the relationship part of declaring the field by using the "lazy" parameter
+# class User_OrmMappedClass(Base):
+#     __tablename__ = "user_account"
+#     ....
+#     addresses: Mapped[List["Address"]] = relationship(
+#         back_populates="user", lazy="selectin"
+#     )
+#     ....
+
+
+# -- Selectin Load
+# ---- Most Useful
+# -- Joined Load
+# ---- "The joinedload() strategy is best suited towards loading related many-to-one objects, as this only requires that additional columns are added to a primary entity row that would be fetched in any case. For greater efficiency, it also accepts an option joinedload.innerjoin so that an inner join instead of an outer join may be used for a case such as below where we know that all Address objects have an associated User:" (https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html#joined-load)
+# -- Explicit Join + Eager Load
+# -- RaiseLoad
