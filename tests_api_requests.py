@@ -3,8 +3,12 @@ from api_requests import sendRequest_toSmithsonian
 
 from api_requests import xmlOrJson
 
+from pprint import pprint
+
 
 ###### Test Smithsonian #####
+
+## NMNH = National Museum of National History
 
 # URL Reference: https://edan.si.edu/openaccess/apidocs/
 testRequest_endStringRequest : str = "search"
@@ -12,7 +16,8 @@ testRequest_params : dict = {
     "q" : "gorilla"
 }
 dataReceived_request1_json : dict = sendRequest_toSmithsonian(testRequest_endStringRequest, testRequest_params)
-print(dataReceived_request1_json)
+# print(dataReceived_request1_json)
+pprint(dataReceived_request1_json)
 
 
 ###### Test ITIS ######
