@@ -3,7 +3,7 @@ from datetime import datetime
 from pprint import pprint
 from pprint import pformat
 
-from constants import outputTextsFolder_filePath
+from constants import outputTextsFolder_folderPath
 
 
 
@@ -13,13 +13,15 @@ class OutputTextWriter:
 
     def __init__(self):
         try:
-            if (os.access(outputTextsFolder_filePath, os.W_OK) == False):
+            if (os.access(outputTextsFolder_folderPath, os.W_OK) == False):
                 raise PermissionError
         except PermissionError as e:
             raise PermissionError("outputTextWriter.py does not have permisison to create/write a text file in the target folder.")
+        self.outputTextFileName : str = os.path.join(outputTextsFolder_folderPath, str(datetime.now())+".txt")
 
     def print(self, inString: str) -> str:
         print(inString)
+        print(self.outputTextFileName)
         with open(self.outputTextFileName, "w") as textFile:
             textFile.write(inString)
         return inString
