@@ -14,7 +14,7 @@ from outputTextWriter import OutputTextWriter
 
 writer : OutputTextWriter = OutputTextWriter()
 
-###### Test Smithsonian #####
+###### Test Smithsonian ######
 
 ## NMNH = National Museum of National History
 
@@ -25,8 +25,10 @@ testRequest_params : dict = {
 }
 dataReceived_request1_json : dict = sendRequest_toSmithsonian(testRequest_endStringRequest, testRequest_params)
 # print(dataReceived_request1_json)
-pprint(dataReceived_request1_json)
-writer.print(dataReceived_request1_json)
+# pprint(dataReceived_request1_json)
+writer.print("Test")
+
+# writer.print_dict(dataReceived_request1_json, True)
 
 
 ###### Test ITIS ######
