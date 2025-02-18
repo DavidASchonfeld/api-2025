@@ -1,25 +1,39 @@
 import os
 from datetime import datetime
+from pprint import pprint
+from pprint import pformat
 
-outputFolder : str = "TextOutputs"
+from constants import outputTextsFolderName
 
-class outputTextWriter:
+
+
+class OutputTextWriter:
 
     outputTextFileName : str
 
     def __init__(self):
-       self.outputTextFileName = os.path.join(outputFolder, str(datetime))
+       self.outputTextFileName = os.path.join(outputTextsFolderName, str(datetime))
     
-    def print_textAndTerminal(inString: str):
+    def print(self, inString: str) -> str:
+        print(inString)
+        with open(self.outputTextFileName, "w") as textFile:
+            textFile.write(inString)
+        return inString
 
+    def print_dict(self, inDict: dict, prettyPrint : bool = False) -> str:
+        
+        ## Pretty Print
+        if (prettyPrint):
 
+            ## Terminal
+            pprint(inDict)
 
+            ## Print to Text File
+            with open(self.outputTextFileName, "w") as textFile:
+                pprint(inDict, stream=textFile)
 
-
-
-
-
-
-outputTextFileName = os.path.join(outputFolder, str(datetime))
-with open(outputTextFileName, "w"):
-    file.write()
+            return pformat(inDict, indent = 4)
+    
+        ## Regular String Printing (aka non-Pretty Print)
+        else: ## Not Pretty Print
+            return self.print(str(inDict))

@@ -5,6 +5,14 @@ from api_requests import xmlOrJson
 
 from pprint import pprint
 
+from outputTextWriter import OutputTextWriter
+
+
+
+
+
+
+writer : OutputTextWriter = OutputTextWriter()
 
 ###### Test Smithsonian #####
 
@@ -18,6 +26,7 @@ testRequest_params : dict = {
 dataReceived_request1_json : dict = sendRequest_toSmithsonian(testRequest_endStringRequest, testRequest_params)
 # print(dataReceived_request1_json)
 pprint(dataReceived_request1_json)
+writer.print(dataReceived_request1_json)
 
 
 ###### Test ITIS ######
