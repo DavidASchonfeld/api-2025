@@ -20,18 +20,19 @@ api_url_beginnings : dict = {
     "itis" : "http://www.itis.gov/ITISWebService/",
     "smithsonian" : "https://api.si.edu/openaccess/api/v1.0"
 }
-# itis_url_beginning : str = "http://www.itis.gov/ITISWebService/"
-# smithsonian_url_beginning : str = "https://api.si.edu/openaccess/api/v1.0"
-
-
-class itis_receiveFormat(Enum):
-    XML = "services/ITISService"
-    JSON = "jsonservice"
 
 class xmlOrJson(Enum):
     XML = 0
     JSON = 1
 
+class itis_receiveFormat(Enum):
+    XML = "services/ITISService"
+    JSON = "jsonservice"
+
+
+# ITIS API References:
+# -- https://www.itis.gov/ws_searchApiDescription.html
+# -- https://www.itis.gov/ws_description.html 
 
 def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson) -> Dict[Any, Any]:
     requestToSend_full : str
@@ -64,7 +65,7 @@ def sendRequest_toITIS(endStringRequest : str, responseContentFormat : xmlOrJson
     return responseContent_dict
 
 
-
+# Smithsonian API Reference: https://edan.si.edu/openaccess/apidocs/
 def sendRequest_toSmithsonian(endStringRequest : str, inParams : dict) -> Dict[Any, Any]:
     
     requestToSend_full : str = os.path.join(api_url_beginnings["smithsonian"], endStringRequest)
