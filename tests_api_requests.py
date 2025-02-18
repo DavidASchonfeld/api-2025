@@ -24,9 +24,15 @@ testRequest_params : dict = {
     "q" : "gorilla"
 }
 dataReceived_request1_json : dict = sendRequest_toSmithsonian(testRequest_endStringRequest, testRequest_params)
-# print(dataReceived_request1_json)
-# pprint(dataReceived_request1_json)
-writer.print("Test")
+
+writer.print("Test1")
+writer.print("Test2")
+
+writer.print_dict(dataReceived_request1_json, prettyPrint= True)
+
+writer.print("Test1")
+writer.print("Test2")
+
 
 # writer.print_dict(dataReceived_request1_json, True)
 
