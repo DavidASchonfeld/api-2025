@@ -20,9 +20,6 @@ class xmlOrJson(Enum):
         XML = 0
         JSON = 1
 
-
-
-
 class apiRequestsLibrary:
     requestLimitPerHour : int
     guideReferences : list[str]
