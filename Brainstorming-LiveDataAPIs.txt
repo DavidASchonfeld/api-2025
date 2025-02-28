@@ -1,0 +1,8 @@
+Searching Results- Brainstormign for APIS with live data
+I do not know the details/reliability of these yet. Brainstorming for now.
+
+OpenSky Network API
+N2YO (Satellite Tracking)
+FlightRadar24 (via Community Feeds) API
+MarineTraffic AIS (live ship tracking)
+Live Penguin Tracker (Penguin Watch API)  - free for research: Free Tier: Free for research via penguinwatch.org/api or zooniverse.org/api.
